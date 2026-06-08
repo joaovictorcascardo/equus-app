@@ -2,14 +2,15 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Eye, EyeOff, Mail, Lock, ArrowRight, Loader2 } from 'lucide-react'
+import { Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useToast } from '@/components/ui/Toast'
+import styles from './login.module.css'
 
 export default function LoginPage() {
-  const router         = useRouter()
-  const { showToast }  = useToast()
+  const router        = useRouter()
+  const { showToast } = useToast()
 
   const [email,    setEmail]    = useState('')
   const [password, setPassword] = useState('')
@@ -63,31 +64,27 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex bg-white">
+    <div className={styles.page}>
 
       {/* ── Painel esquerdo — foto (desktop) ── */}
-      <div className="hidden lg:flex lg:w-[55%] relative flex-col items-start justify-end p-12 overflow-hidden">
+      <div className={styles.left}>
         <div
-          className="absolute inset-0 bg-cover bg-center"
+          className={styles.leftBg}
           style={{ backgroundImage: "url('https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?w=1200&q=85')" }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+        <div className={styles.leftOverlay} />
 
-        {/* Logo desktop */}
-        <div className="absolute top-10 left-10 flex items-center gap-2.5 z-10">
-          <div className="w-9 h-9 rounded-xl bg-emerald-500 flex items-center justify-center shadow-lg">
-            <span className="text-lg">🐴</span>
-          </div>
-          <span className="text-white text-xl font-black tracking-tight">Equus</span>
+        <div className={styles.leftLogo}>
+          <div className={styles.leftLogoIcon}>🐴</div>
+          <span className={styles.leftLogoText}>Equus</span>
         </div>
 
-        {/* Tagline */}
-        <div className="relative z-10 mb-4">
+        <div className={styles.tagline}>
           <motion.h2
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-5xl font-black text-white leading-tight mb-4"
+            className={styles.taglineH2}
           >
             O mercado premium<br />do mundo equestre.
           </motion.h2>
@@ -95,7 +92,7 @@ export default function LoginPage() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
-            className="text-white/70 text-lg max-w-sm leading-relaxed"
+            className={styles.taglineP}
           >
             Compre, venda e conecte-se com os melhores haras e criadores do Brasil.
           </motion.p>
@@ -103,29 +100,23 @@ export default function LoginPage() {
       </div>
 
       {/* ── Painel direito — formulário ── */}
-      <div className="flex-1 flex items-center justify-center px-6 py-12 lg:py-0 bg-white">
+      <div className={styles.right}>
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
-          className="w-full max-w-[380px]"
+          className={styles.box}
         >
           {/* Logo mobile */}
-          <div className="flex items-center gap-2.5 mb-10 lg:hidden">
-            <div className="w-9 h-9 rounded-xl bg-emerald-500 flex items-center justify-center">
-              <span className="text-lg">🐴</span>
-            </div>
-            <span className="text-xl font-black text-slate-900 tracking-tight">Equus</span>
+          <div className={styles.mobileLogo}>
+            <div className={styles.logoIcon}>🐴</div>
+            <span className={styles.logoText}>Equus</span>
           </div>
 
           {/* Cabeçalho */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight">
-              Bem-vindo de volta
-            </h1>
-            <p className="text-slate-500 text-sm mt-2">
-              Entre na sua conta para continuar
-            </p>
+          <div className={styles.header}>
+            <h1 className={styles.title}>Bem-vindo de volta</h1>
+            <p className={styles.subtitle}>Entre na sua conta para continuar</p>
           </div>
 
           {/* Erro inline */}
@@ -135,7 +126,7 @@ export default function LoginPage() {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className="mb-4 px-4 py-3 rounded-2xl bg-red-50 border border-red-100 text-red-600 text-sm font-medium"
+                className={styles.errorBox}
               >
                 {error}
               </motion.div>
@@ -143,15 +134,13 @@ export default function LoginPage() {
           </AnimatePresence>
 
           {/* Formulário */}
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className={styles.form}>
 
             {/* Email */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                Email
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <div className={styles.field}>
+              <label className={styles.label}>Email</label>
+              <div className={styles.inputWrap}>
+                <Mail className={styles.inputIcon} size={16} />
                 <input
                   type="email"
                   value={email}
@@ -159,29 +148,21 @@ export default function LoginPage() {
                   placeholder="seu@email.com"
                   required
                   autoComplete="email"
-                  className="w-full pl-11 pr-4 py-4 rounded-2xl border border-slate-200 bg-slate-50
-                             text-sm text-slate-900 placeholder:text-slate-300
-                             focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent
-                             focus:bg-white transition-all duration-200"
+                  className={styles.input}
                 />
               </div>
             </div>
 
             {/* Senha */}
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                  Senha
-                </label>
-                <Link
-                  href="/recuperar-senha"
-                  className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 hover:underline transition-colors"
-                >
+            <div className={styles.field}>
+              <div className={styles.fieldHeader}>
+                <label className={styles.label}>Senha</label>
+                <Link href="/recuperar-senha" className={styles.forgotLink}>
                   Esqueci minha senha
                 </Link>
               </div>
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <div className={styles.inputWrap}>
+                <Lock className={styles.inputIcon} size={16} />
                 <input
                   type={showPwd ? 'text' : 'password'}
                   value={password}
@@ -189,69 +170,52 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   required
                   autoComplete="current-password"
-                  className="w-full pl-11 pr-12 py-4 rounded-2xl border border-slate-200 bg-slate-50
-                             text-sm text-slate-900 placeholder:text-slate-300
-                             focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent
-                             focus:bg-white transition-all duration-200"
+                  className={`${styles.input} ${styles.inputPwd}`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPwd(v => !v)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400
-                             hover:text-slate-600 transition-colors"
+                  className={styles.eyeBtn}
                   tabIndex={-1}
                   aria-label={showPwd ? 'Ocultar senha' : 'Mostrar senha'}
                 >
-                  {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showPwd ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
             </div>
 
             {/* Botão entrar */}
-            <motion.button
-              whileTap={{ scale: 0.97 }}
+            <button
               type="submit"
               disabled={loading || !email || !password}
-              className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl mt-2
-                         bg-emerald-600 text-white font-bold text-sm tracking-wide
-                         hover:bg-emerald-700 active:bg-emerald-800
-                         disabled:opacity-40 disabled:cursor-not-allowed
-                         shadow-lg shadow-emerald-200 transition-all duration-200"
+              className={styles.btnPrimary}
             >
               {loading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <span className={styles.spinner} />
               ) : (
                 <>
                   Entrar
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight size={16} />
                 </>
               )}
-            </motion.button>
+            </button>
           </form>
 
           {/* Divisor */}
-          <div className="flex items-center gap-3 my-6">
-            <div className="flex-1 h-px bg-slate-200" />
-            <span className="text-xs text-slate-400 font-medium">ou</span>
-            <div className="flex-1 h-px bg-slate-200" />
+          <div className={styles.divider}>
+            <div className={styles.dividerLine} />
+            <span className={styles.dividerText}>ou</span>
+            <div className={styles.dividerLine} />
           </div>
 
           {/* Criar conta */}
-          <Link href="/cadastro">
-            <motion.div
-              whileTap={{ scale: 0.97 }}
-              className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl
-                         border-2 border-slate-200 text-slate-700 font-bold text-sm
-                         hover:border-emerald-400 hover:text-emerald-700
-                         transition-all duration-200 cursor-pointer"
-            >
-              Criar uma conta grátis
-            </motion.div>
+          <Link href="/cadastro" className={styles.btnSecondary}>
+            Criar uma conta grátis
           </Link>
 
-          <p className="text-center text-xs text-slate-400 mt-6 leading-relaxed">
+          <p className={styles.footer}>
             Ao entrar, você concorda com nossos{' '}
-            <span className="text-emerald-600 cursor-pointer hover:underline">Termos de Uso</span>
+            <span className={styles.footerLink}>Termos de Uso</span>
           </p>
         </motion.div>
       </div>

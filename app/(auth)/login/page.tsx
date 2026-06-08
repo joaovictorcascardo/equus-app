@@ -1,45 +1,61 @@
 'use client'
 
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Eye, EyeOff, Mail, Lock, ArrowRight, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useToast } from '@/components/ui/Toast'
 
 export default function LoginPage() {
-  const router      = useRouter()
-  const { showToast } = useToast()
+  const router         = useRouter()
+  const { showToast }  = useToast()
 
   const [email,    setEmail]    = useState('')
   const [password, setPassword] = useState('')
   const [showPwd,  setShowPwd]  = useState(false)
   const [loading,  setLoading]  = useState(false)
+  const [error,    setError]    = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!email || !password) return
+    setError('')
+
+    console.log('[LOGIN PAGE] submit — email:', email)
+
+    if (!email || !password) {
+      setError('Preencha email e senha.')
+      return
+    }
 
     setLoading(true)
     try {
-      const res = await fetch('/api/auth/login', {
+      console.log('[LOGIN PAGE] chamando /api/auth/login...')
+
+      const res  = await fetch('/api/auth/login', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({ email, password }),
       })
 
       const data = await res.json()
+      console.log('[LOGIN PAGE] resposta:', res.status, data)
 
       if (!res.ok) {
+        console.warn('[LOGIN PAGE] erro da API:', data.error)
+        setError(data.error || 'Erro ao entrar')
         showToast(data.error || 'Erro ao entrar', 'error')
         return
       }
 
-      showToast(`Bem-vindo de volta, ${data.user.name.split(' ')[0]}!`)
+      console.log('[LOGIN PAGE] login ok — userId:', data.user?.id)
+      showToast(`Bem-vindo, ${data.user.name.split(' ')[0]}!`)
       router.push('/')
       router.refresh()
 
-    } catch {
+    } catch (err) {
+      console.error('[LOGIN PAGE] erro de rede:', err)
+      setError('Erro de conexão. Verifique sua internet.')
       showToast('Erro de conexão. Tente novamente.', 'error')
     } finally {
       setLoading(false)
@@ -47,79 +63,95 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex bg-white">
 
-      {/* ── Painel esquerdo (desktop) ── */}
-      <div className="hidden lg:flex lg:w-1/2 xl:w-[55%] relative flex-col items-start justify-end p-12 overflow-hidden">
-        {/* Background image */}
+      {/* ── Painel esquerdo — foto (desktop) ── */}
+      <div className="hidden lg:flex lg:w-[55%] relative flex-col items-start justify-end p-12 overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: "url('https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?w=1200&q=85')" }}
         />
-        {/* Overlay gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
-        {/* Logo */}
+        {/* Logo desktop */}
         <div className="absolute top-10 left-10 flex items-center gap-2.5 z-10">
-          <div className="w-9 h-9 rounded-xl bg-emerald-500 flex items-center justify-center">
-            <span className="text-xl">🐴</span>
+          <div className="w-9 h-9 rounded-xl bg-emerald-500 flex items-center justify-center shadow-lg">
+            <span className="text-lg">🐴</span>
           </div>
           <span className="text-white text-xl font-black tracking-tight">Equus</span>
         </div>
 
         {/* Tagline */}
-        <div className="relative z-10">
+        <div className="relative z-10 mb-4">
           <motion.h2
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-4xl font-black text-white leading-tight mb-3"
+            transition={{ delay: 0.2, duration: 0.6 }}
+            className="text-5xl font-black text-white leading-tight mb-4"
           >
             O mercado premium<br />do mundo equestre.
           </motion.h2>
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.35 }}
-            className="text-white/70 text-base max-w-sm"
+            transition={{ delay: 0.4, duration: 0.6 }}
+            className="text-white/70 text-lg max-w-sm leading-relaxed"
           >
             Compre, venda e conecte-se com os melhores haras e criadores do Brasil.
           </motion.p>
         </div>
       </div>
 
-      {/* ── Painel direito (formulário) ── */}
-      <div className="flex-1 flex items-center justify-center px-5 py-10 lg:py-0">
+      {/* ── Painel direito — formulário ── */}
+      <div className="flex-1 flex items-center justify-center px-6 py-12 lg:py-0 bg-white">
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.4 }}
-          className="w-full max-w-sm"
+          transition={{ duration: 0.5 }}
+          className="w-full max-w-[380px]"
         >
           {/* Logo mobile */}
-          <div className="flex items-center gap-2 mb-8 lg:hidden">
-            <div className="w-9 h-9 rounded-xl bg-emerald-600 flex items-center justify-center">
-              <span className="text-xl">🐴</span>
+          <div className="flex items-center gap-2.5 mb-10 lg:hidden">
+            <div className="w-9 h-9 rounded-xl bg-emerald-500 flex items-center justify-center">
+              <span className="text-lg">🐴</span>
             </div>
             <span className="text-xl font-black text-slate-900 tracking-tight">Equus</span>
           </div>
 
-          {/* Header */}
+          {/* Cabeçalho */}
           <div className="mb-8">
-            <h1 className="text-2xl font-black text-slate-900">Bem-vindo de volta</h1>
-            <p className="text-slate-500 text-sm mt-1">Entre na sua conta para continuar</p>
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+              Bem-vindo de volta
+            </h1>
+            <p className="text-slate-500 text-sm mt-2">
+              Entre na sua conta para continuar
+            </p>
           </div>
 
-          {/* Form */}
+          {/* Erro inline */}
+          <AnimatePresence>
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mb-4 px-4 py-3 rounded-2xl bg-red-50 border border-red-100 text-red-600 text-sm font-medium"
+              >
+                {error}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Formulário */}
           <form onSubmit={handleSubmit} className="space-y-4">
 
             {/* Email */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-600 uppercase tracking-wide">
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
                 Email
               </label>
               <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <input
                   type="email"
                   value={email}
@@ -127,10 +159,10 @@ export default function LoginPage() {
                   placeholder="seu@email.com"
                   required
                   autoComplete="email"
-                  className="w-full pl-10 pr-4 py-3.5 rounded-2xl border border-slate-200 bg-white
+                  className="w-full pl-11 pr-4 py-4 rounded-2xl border border-slate-200 bg-slate-50
                              text-sm text-slate-900 placeholder:text-slate-300
                              focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent
-                             transition-all"
+                             focus:bg-white transition-all duration-200"
                 />
               </div>
             </div>
@@ -138,16 +170,18 @@ export default function LoginPage() {
             {/* Senha */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-semibold text-slate-600 uppercase tracking-wide">
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
                   Senha
                 </label>
-                <Link href="/recuperar-senha"
-                  className="text-xs text-emerald-600 font-semibold hover:underline">
+                <Link
+                  href="/recuperar-senha"
+                  className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 hover:underline transition-colors"
+                >
                   Esqueci minha senha
                 </Link>
               </div>
               <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <input
                   type={showPwd ? 'text' : 'password'}
                   value={password}
@@ -155,32 +189,34 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   required
                   autoComplete="current-password"
-                  className="w-full pl-10 pr-12 py-3.5 rounded-2xl border border-slate-200 bg-white
+                  className="w-full pl-11 pr-12 py-4 rounded-2xl border border-slate-200 bg-slate-50
                              text-sm text-slate-900 placeholder:text-slate-300
                              focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent
-                             transition-all"
+                             focus:bg-white transition-all duration-200"
                 />
                 <button
                   type="button"
-                  onClick={() => setShowPwd(!showPwd)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  onClick={() => setShowPwd(v => !v)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400
+                             hover:text-slate-600 transition-colors"
                   tabIndex={-1}
+                  aria-label={showPwd ? 'Ocultar senha' : 'Mostrar senha'}
                 >
                   {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>
 
-            {/* Submit */}
+            {/* Botão entrar */}
             <motion.button
               whileTap={{ scale: 0.97 }}
               type="submit"
               disabled={loading || !email || !password}
-              className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl
-                         bg-emerald-600 text-white font-bold text-sm
-                         hover:bg-emerald-700 transition-colors
-                         disabled:opacity-50 disabled:cursor-not-allowed
-                         shadow-lg shadow-emerald-100 mt-2"
+              className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl mt-2
+                         bg-emerald-600 text-white font-bold text-sm tracking-wide
+                         hover:bg-emerald-700 active:bg-emerald-800
+                         disabled:opacity-40 disabled:cursor-not-allowed
+                         shadow-lg shadow-emerald-200 transition-all duration-200"
             >
               {loading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -193,26 +229,27 @@ export default function LoginPage() {
             </motion.button>
           </form>
 
-          {/* Divider */}
+          {/* Divisor */}
           <div className="flex items-center gap-3 my-6">
             <div className="flex-1 h-px bg-slate-200" />
             <span className="text-xs text-slate-400 font-medium">ou</span>
             <div className="flex-1 h-px bg-slate-200" />
           </div>
 
-          {/* Link cadastro */}
+          {/* Criar conta */}
           <Link href="/cadastro">
             <motion.div
               whileTap={{ scale: 0.97 }}
-              className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl
+              className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl
                          border-2 border-slate-200 text-slate-700 font-bold text-sm
-                         hover:border-emerald-300 hover:text-emerald-700 transition-colors cursor-pointer"
+                         hover:border-emerald-400 hover:text-emerald-700
+                         transition-all duration-200 cursor-pointer"
             >
               Criar uma conta grátis
             </motion.div>
           </Link>
 
-          <p className="text-center text-xs text-slate-400 mt-6">
+          <p className="text-center text-xs text-slate-400 mt-6 leading-relaxed">
             Ao entrar, você concorda com nossos{' '}
             <span className="text-emerald-600 cursor-pointer hover:underline">Termos de Uso</span>
           </p>

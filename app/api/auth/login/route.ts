@@ -14,10 +14,16 @@ interface UserRow {
 }
 
 export async function POST(request: NextRequest) {
+  console.log('[LOGIN] POST recebido')
+
   try {
-    const { email, password } = await request.json()
+    const body = await request.json()
+    const { email, password } = body
+
+    console.log('[LOGIN] email recebido:', email?.toLowerCase?.()?.trim())
 
     if (!email?.trim() || !password) {
+      console.log('[LOGIN] campos faltando — email:', !!email, 'senha:', !!password)
       return NextResponse.json({ error: 'Email e senha obrigatórios' }, { status: 400 })
     }
 
@@ -27,15 +33,21 @@ export async function POST(request: NextRequest) {
     )
 
     if (!user) {
+      console.log('[LOGIN] usuário não encontrado para:', email)
       return NextResponse.json({ error: 'Email ou senha incorretos' }, { status: 401 })
     }
 
+    console.log('[LOGIN] usuário encontrado — id:', user.id, 'type:', user.type)
+
     const valid = await comparePassword(password, user.password_hash)
+    console.log('[LOGIN] senha válida:', valid)
+
     if (!valid) {
       return NextResponse.json({ error: 'Email ou senha incorretos' }, { status: 401 })
     }
 
     const token = signToken({ userId: user.id, username: user.username })
+    console.log('[LOGIN] token gerado — userId:', user.id)
 
     const response = NextResponse.json({
       user: {
@@ -49,10 +61,11 @@ export async function POST(request: NextRequest) {
     })
 
     response.cookies.set(authCookieOptions(token))
+    console.log('[LOGIN] sucesso — redirecionando userId:', user.id)
     return response
 
   } catch (err) {
-    console.error('[login]', err)
+    console.error('[LOGIN] erro interno:', err)
     return NextResponse.json({ error: 'Erro interno. Tente novamente.' }, { status: 500 })
   }
 }

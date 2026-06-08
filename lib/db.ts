@@ -1,4 +1,4 @@
-import mysql from 'mysql2/promise'
+import mysql, { type ExecuteValues } from 'mysql2/promise'
 
 const pool = mysql.createPool({
   host:            process.env.DB_HOST     || 'localhost',
@@ -14,12 +14,12 @@ const pool = mysql.createPool({
 
 export default pool
 
-export async function query<T = unknown>(sql: string, params?: unknown[]): Promise<T[]> {
+export async function query<T = unknown>(sql: string, params?: ExecuteValues): Promise<T[]> {
   const [rows] = await pool.execute(sql, params)
   return rows as T[]
 }
 
-export async function queryOne<T = unknown>(sql: string, params?: unknown[]): Promise<T | null> {
+export async function queryOne<T = unknown>(sql: string, params?: ExecuteValues): Promise<T | null> {
   const rows = await query<T>(sql, params)
   return rows[0] ?? null
 }

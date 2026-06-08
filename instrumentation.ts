@@ -1,18 +1,19 @@
 export async function register() {
-  console.log('[EQUUS] instrumentation carregada — env:', process.env.NODE_ENV, '— porta:', process.env.PORT)
+  console.log('[I1] instrumentation.ts register() chamado — env:', process.env.NODE_ENV)
+  console.log('[I2] PORT:', process.env.PORT, '— DB_HOST:', process.env.DB_HOST)
 
   process.on('uncaughtException', (err: Error) => {
-    console.error('[EQUUS CRASH] uncaughtException:', err.message)
+    console.error('[I-CRASH] uncaughtException:', err.message)
     console.error(err.stack)
   })
 
   process.on('unhandledRejection', (reason: unknown) => {
-    console.error('[EQUUS CRASH] unhandledRejection:', String(reason))
+    console.error('[I-CRASH] unhandledRejection:', String(reason))
   })
 
   process.on('exit', (code: number) => {
-    if (code !== 0) {
-      console.error('[EQUUS EXIT] processo encerrado com código', code)
-    }
+    console.log('[I-EXIT] código de saída:', code)
   })
+
+  console.log('[I3] instrumentation.ts concluído')
 }

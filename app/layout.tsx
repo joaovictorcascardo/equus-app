@@ -3,6 +3,8 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { ToastProvider } from '@/components/ui/Toast'
 
+console.log('[LAYOUT] app/layout.tsx carregado no servidor')
+
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
@@ -29,6 +31,7 @@ export const viewport: Viewport = {
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  console.log('[LAYOUT] RootLayout renderizado')
   return (
     <html lang="pt-BR" className={inter.variable}>
       <body>

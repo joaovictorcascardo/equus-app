@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, use } from 'react'
 import { motion, AnimatePresence, useMotionValue, useTransform, PanInfo } from 'framer-motion'
 import {
   ArrowLeft, Heart, Share2, ChevronLeft, ChevronRight,
@@ -249,7 +249,8 @@ function ExamRow({ label, ok, date }: { label: string; ok: boolean; date?: strin
 // ─────────────────────────────────────────────────────────────
 // MAIN PAGE
 // ─────────────────────────────────────────────────────────────
-export default function HorseDetailPage({ params }: { params: { id: string } }) {
+export default function HorseDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params)
   const router      = useRouter()
   const { showToast } = useToast()
   const [horse,    setHorse]    = useState<Horse | null>(null)
@@ -262,8 +263,7 @@ export default function HorseDetailPage({ params }: { params: { id: string } }) 
   useEffect(() => {
     async function load() {
       try {
-        // Troque por: const res = await fetch(`/api/horses/${params.id}`)
-        // Simulando delay de rede
+        // Troque por: const res = await fetch(`/api/horses/${id}`)
         await new Promise(r => setTimeout(r, 900))
         setHorse(MOCK_HORSE)
         setSaved(MOCK_HORSE.saved ?? false)
@@ -274,7 +274,7 @@ export default function HorseDetailPage({ params }: { params: { id: string } }) 
       }
     }
     load()
-  }, [params.id])
+  }, [id])
 
   // ── Handlers ───────────────────────────────────────────────
   const handleSave = async () => {
@@ -303,7 +303,7 @@ export default function HorseDetailPage({ params }: { params: { id: string } }) 
   }
 
   const handleChat = () => {
-    router.push(`/chat?horse=${params.id}&seller=${horse?.owner_id}`)
+    router.push(`/chat?horse=${id}&seller=${horse?.owner_id}`)
   }
 
   // ── Render ─────────────────────────────────────────────────

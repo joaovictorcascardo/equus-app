@@ -10,7 +10,7 @@ export async function GET() {
     }
 
     const user = await queryOne(
-      'SELECT id, name, username, email, avatar_url, cover_url, bio, city, state, type, verified FROM users WHERE id = ? AND is_active = 1',
+      'SELECT id, name, username, email, avatar_url, cover_url, bio, city, state, type, verified, whatsapp, phone FROM users WHERE id = ? AND is_active = 1',
       [session.userId]
     )
 

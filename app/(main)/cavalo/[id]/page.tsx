@@ -263,10 +263,11 @@ export default function HorseDetailPage({ params }: { params: Promise<{ id: stri
   useEffect(() => {
     async function load() {
       try {
-        // Troque por: const res = await fetch(`/api/horses/${id}`)
-        await new Promise(r => setTimeout(r, 900))
-        setHorse(MOCK_HORSE)
-        setSaved(MOCK_HORSE.saved ?? false)
+        const res = await fetch(`/api/horses/${id}`)
+        if (!res.ok) { setNotFound(true); return }
+        const data = await res.json()
+        setHorse(data.horse)
+        setSaved(data.horse.saved ?? false)
       } catch {
         setNotFound(true)
       } finally {
@@ -281,7 +282,7 @@ export default function HorseDetailPage({ params }: { params: Promise<{ id: stri
     const next = !saved
     setSaved(next)
     showToast(next ? '❤️ Adicionado aos favoritos!' : 'Removido dos favoritos')
-    // await fetch(`/api/horses/${params.id}/save`, { method: 'POST' })
+    await fetch(`/api/horses/${id}/save`, { method: 'POST' })
   }
 
   const handleShare = async () => {
@@ -302,8 +303,16 @@ export default function HorseDetailPage({ params }: { params: Promise<{ id: stri
     window.open(buildWhatsAppLink(horse.owner.whatsapp, horse.name), '_blank')
   }
 
-  const handleChat = () => {
-    router.push(`/chat?horse=${id}&seller=${horse?.owner_id}`)
+  const handleChat = async () => {
+    if (!horse) return
+    const res = await fetch('/api/conversations', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ horse_id: horse.id, seller_id: horse.owner_id }),
+    })
+    if (!res.ok) { showToast('Faça login para conversar', 'error'); return }
+    const data = await res.json()
+    router.push(`/chat/${data.conversation.id}`)
   }
 
   // ── Render ─────────────────────────────────────────────────

@@ -1,7 +1,4 @@
 /** @type {import('next').NextConfig} */
-
-console.log('[CFG] next.config.mjs carregado — NODE_ENV:', process.env.NODE_ENV)
-
 const nextConfig = {
   output: 'standalone',
   images: {

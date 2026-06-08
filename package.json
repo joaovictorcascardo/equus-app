@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "postbuild": "cp -r .next/static .next/standalone/.next/static",
-    "start": "node test-server.js",
+    "start": "node server.js",
     "lint": "next lint"
   },
   "dependencies": {

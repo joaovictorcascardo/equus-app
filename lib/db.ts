@@ -1,4 +1,4 @@
-import mysql, { type ExecuteValues } from 'mysql2/promise'
+import mysql, { type ExecuteValues, type ResultSetHeader } from 'mysql2/promise'
 
 const pool = mysql.createPool({
   host:            process.env.DB_HOST     || 'localhost',
@@ -22,4 +22,9 @@ export async function query<T = unknown>(sql: string, params?: ExecuteValues): P
 export async function queryOne<T = unknown>(sql: string, params?: ExecuteValues): Promise<T | null> {
   const rows = await query<T>(sql, params)
   return rows[0] ?? null
+}
+
+export async function insert(sql: string, params?: ExecuteValues): Promise<number> {
+  const [result] = await pool.execute(sql, params)
+  return (result as ResultSetHeader).insertId
 }

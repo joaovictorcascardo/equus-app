@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "NODE_OPTIONS='--max-old-space-size=1536' next build",
-    "start": "NODE_OPTIONS='--max-old-space-size=256' next start"
+    "start": "NODE_OPTIONS='--max-old-space-size=256' next start",
     "lint": "next lint"
   },
   "dependencies": {

@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-inter: 'Inter', system-ui, sans-serif;
+    scroll-behavior: smooth;
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-900;
+    overscroll-behavior: none;
+  }
+
+  /* Scrollbar slim */
+  ::-webkit-scrollbar        { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track  { background: transparent; }
+  ::-webkit-scrollbar-thumb  { @apply bg-slate-200 rounded-full; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-slate-300; }
+}
+
+@layer utilities {
+  /* Safe area helpers para iOS */
+  .pb-safe   { padding-bottom: env(safe-area-inset-bottom); }
+  .mb-safe   { margin-bottom:  env(safe-area-inset-bottom); }
+
+  /* Glass card */
+  .glass {
+    @apply bg-white/80 backdrop-blur-md border border-white/60;
+  }
+}

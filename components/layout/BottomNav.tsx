@@ -1,16 +1,23 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { Home, Search, PlusCircle, MessageCircle, User } from 'lucide-react'
+import { Home, Search, PlusCircle, MessageCircle, User, type LucideIcon } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 
-const NAV_ITEMS = [
-  { icon: Home,          label: 'Início',   href: '/'       },
-  { icon: Search,        label: 'Buscar',   href: '/buscar' },
+interface NavItem {
+  icon: LucideIcon
+  label: string
+  href: string
+  special?: boolean
+}
+
+const NAV_ITEMS: NavItem[] = [
+  { icon: Home,          label: 'Início',   href: '/'            },
+  { icon: Search,        label: 'Buscar',   href: '/buscar'      },
   { icon: PlusCircle,    label: 'Anunciar', href: '/cavalo/novo', special: true },
-  { icon: MessageCircle, label: 'Chat',     href: '/chat'   },
-  { icon: User,          label: 'Perfil',   href: '/perfil' },
-] as const
+  { icon: MessageCircle, label: 'Chat',     href: '/chat'        },
+  { icon: User,          label: 'Perfil',   href: '/perfil'      },
+]
 
 export function BottomNav() {
   const pathname = usePathname()
